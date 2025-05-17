@@ -1,6 +1,6 @@
 name: OneDrive Sync
 slug: onedrive_sync
-version: "1.1.8"
+version: "1.1.10"
 description: "Bidirectional sync between a local HA folder and a OneDrive sub-folder"
 url: "https://github.com/yourrepo/onedrive-sync-addon"
 
