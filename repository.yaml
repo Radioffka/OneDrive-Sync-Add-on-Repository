@@ -1,0 +1,11 @@
+name: "OneDrive Sync Add-on Repository"
+version: "1.1.2"
+slug: "ha-addon-one-drive"
+description: "Home Assistant add-on repository for OneDrive Sync"
+maintainer: "Martin Král"
+addons:
+  - slug: "onedrive_sync"
+    name: "OneDrive Sync"
+    version: "1.1.2"
+    description: "Bidirectional sync between Home Assistant folder and Microsoft OneDrive sub-folder"
+    url: "https://github.com/onedrive_sync_HA/onedrive-sync-addon"

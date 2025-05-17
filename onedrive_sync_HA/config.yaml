@@ -1,0 +1,33 @@
+name: "OneDrive Sync"
+slug: "onedrive_sync"
+version: "1.1.2"          # bump whenever image changes
+description: >
+  Bidirectional sync between one Home-Assistant folder and a sub-folder
+  in Microsoft OneDrive, using the abraunegg/onedrive Linux client.
+
+url: "https://github.com/yourrepo/onedrive-sync-addon"  # → adjust!
+
+# Supervisor will build the image for each listed architecture
+arch:
+  - amd64
+  - aarch64
+  - armv7
+
+startup: services   # start during the “services” stage
+boot: auto          # start automatically on HA boot
+
+map:
+  - config:rw       # tokens & client config live under /data/onedrive
+  - media:rw        # default sync dir is /media/onedrive
+
+options:
+  local_folder: "/media/onedrive"   # host folder to mirror
+  remote_folder: "HomeAssistant"    # OneDrive sub-folder (empty = whole root)
+  azure_client_id: ""               # optional – use AppFolder scope
+  azure_client_secret: ""           # optional
+
+schema:
+  local_folder: str
+  remote_folder: str?
+  azure_client_id: str?
+  azure_client_secret: str?
