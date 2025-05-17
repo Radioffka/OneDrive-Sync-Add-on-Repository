@@ -1,6 +1,6 @@
 name: OneDrive Sync
 slug: onedrive_sync
-version: "1.1.12"                    # bump
+version: "1.2.0"
 
 description: "Bidirectional sync between a local HA folder and a OneDrive sub-folder"
 url: "https://github.com/yourrepo/onedrive-sync-addon"
@@ -27,8 +27,6 @@ tmpfs: true
 timeout: 60
 
 #######################################
-# Options (měníš v GUI)
-#######################################
 schema:
   local_folder: str?
   remote_folder: str?
@@ -41,10 +39,4 @@ options:
   remote_folder: HomeAssistant
   azure_client_id: ""
   azure_client_secret: ""
-  onedrive_authresponse: ""          # ← sem vlož URL s ?code=...
-
-#######################################
-# Environment (Supervisor→kontejner)
-#######################################
-environment:
-  ONEDRIVE_AUTHRESPONSE: ${onedrive_authresponse}   # ← složené závorky!
+  onedrive_authresponse: ""        # ← sem vlož URL (po úspěšném loginu můžeš smazat)
