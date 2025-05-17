@@ -43,4 +43,4 @@ options:
 # Environment
 #######################################
 environment:
-  ONEDRIVE_AUTHRESPONSE: $onedrive_authresponse
+  onedrive_authresponse: $onedrive_authresponse
