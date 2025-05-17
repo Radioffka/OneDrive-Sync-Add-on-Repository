@@ -1,6 +1,6 @@
 name: "OneDrive Sync"
 slug: "onedrive_sync"
-version: "1.1.2"          # bump whenever image changes
+version: "1.1.3"          # bump whenever image changes
 description: >
   Bidirectional sync between one Home-Assistant folder and a sub-folder
   in Microsoft OneDrive, using the abraunegg/onedrive Linux client.
