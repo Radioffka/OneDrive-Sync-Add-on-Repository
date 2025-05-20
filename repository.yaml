@@ -1,4 +1,3 @@
-# v kořenové složce repozitáře
 name: OneDrive Add-ons
 url:  https://github.com/yourrepo/onedrive-sync-addon
 maintainer: …
@@ -8,7 +7,5 @@ addons:
   - slug: onedrive_sync
     name: OneDrive Sync
     version: 1.3.1
-    # buď nechej Supervisor buildovat z Dockerfile…
-    # image: ""
-    # …nebo použij validní název (všechno malými, žádné _):
+
     image: "ghcr.io/7eaa9e20/onedrive-sync-{arch}"
