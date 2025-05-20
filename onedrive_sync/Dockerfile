@@ -1,62 +1,36 @@
-###############################################################################
-# Home-Assistant add-on  —  OneDrive Sync (bidirectional folder mirroring)
-###############################################################################
+# syntax=docker/dockerfile:1
 
-##### 1️⃣  BUILD STAGE ########################################################
-FROM debian:bookworm AS build
+######################### build stage #########################
+FROM debian:bookworm AS builder
+ARG ONEDRIVE_REF=v2.5.5
+ENV DEBIAN_FRONTEND=noninteractive
 
-ARG ONEDRIVE_TAG=master
-ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+      git build-essential pkg-config ca-certificates curl \
+      libcurl4-openssl-dev libsqlite3-dev libxml2-dev libssl-dev \
+      zlib1g-dev ldc \
+ && git clone --branch "$ONEDRIVE_REF" https://github.com/abraunegg/onedrive.git /src \
+ && cd /src \
+ && git fetch --tags \
+ && sed -i 's/checkOpenSSLVersion();/\/\* checkOpenSSLVersion disabled \*\//' src/main.d \
+ && ./configure \
+ && make -j"$(nproc)"
 
-# Kompilační nástroje + hlavičky
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-      git build-essential pkg-config ldc \
-      libcurl4-openssl-dev libssl-dev libsqlite3-dev libxml2-dev \
-      ca-certificates && \
-    rm -rf /var/lib/apt/lists/*
+######################### runtime stage #########################
+FROM debian:bookworm-slim
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Kompletní klon (bez --depth) kvůli git describe
-RUN git clone --branch "${ONEDRIVE_TAG}" \
-      https://github.com/abraunegg/onedrive.git /src
-WORKDIR /src
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+      bash ca-certificates \
+      libcurl4 libsqlite3-0 libxml2 libssl3 libphobos2-ldc-shared100 jq openssl \
+ && update-ca-certificates \
+ && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# ---------------------------------------------------------------------------
-# 🔥 PATCH: zahoď fork() v getOpenSSLVersion() a vezmi verzi přímo z libcurl
-# ---------------------------------------------------------------------------
-RUN sed -i '/string getOpenSSLVersion()/,/^}/c\
-string getOpenSSLVersion() {\n\
-    import std.conv : to;\n\
-    auto info = curl_version_info(CURLVERSION_NOW);\n\
-    return to!string(info.ssl_version);\n\
-}' src/util.d
-
-# Build
-RUN ./configure && make -j"$(nproc)"
-
-##### 2️⃣  RUNTIME STAGE ######################################################
-FROM debian:bookworm-slim AS runtime
-ARG DEBIAN_FRONTEND=noninteractive
-
-# Pouze nutné runtime knihovny
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-      libcurl4 libssl3 openssl libsqlite3-0 libxml2 \
-      inotify-tools ca-certificates bash jq && \
-    rm -rf /var/lib/apt/lists/*
-
-# Binárka + D-runtime
-COPY --from=build /src/onedrive /usr/local/bin/onedrive
-COPY --from=build /usr/lib/*/libdruntime-ldc-shared*.so.* /usr/local/lib/
-COPY --from=build /usr/lib/*/libphobos2-ldc-shared*.so.*  /usr/local/lib/
-RUN ldconfig
-
-# Perzistentní složky (Supervisor mapuje /data a /media)
-RUN mkdir -p /data/onedrive /media/onedrive
-
-# Entrypoint
+COPY --from=builder /src/onedrive /usr/local/bin/onedrive
 COPY run.sh /run.sh
+
 RUN chmod +x /run.sh
 
-WORKDIR /data
 ENTRYPOINT ["/run.sh"]
