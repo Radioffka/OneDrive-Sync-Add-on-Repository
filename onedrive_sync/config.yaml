@@ -1,10 +1,8 @@
 name: OneDrive Sync
-slug: onedrive_sync_HA
-version: "1.3.2"                 # bump
-
-description: "Bidirectional sync between a local HA folder and a OneDrive sub-folder"
-url: "https://github.com/yourrepo/onedrive-sync-addon"
-
+slug: onedrive_sync
+version: "1.1.1"
+description: Mirror a local folder ↔ a OneDrive folder using abraunegg/onedrive v2.5.5
+url: https://github.com/your-repo/addons/local/onedrive_sync
 arch:
   - amd64
   - aarch64
@@ -12,32 +10,25 @@ arch:
 
 startup: services
 boot: auto
-init: false
-ingress: false
-panel_icon: mdi:microsoft-onedrive
 
-privileged:
-  - NET_ADMIN
-
+# namapovat hostitelské /media
 map:
   - media:rw
-  - addon_config:rw
-
-tmpfs: true
-timeout: 60
-
-#######################################
-schema:
-  local_folder: str?
-  remote_folder: str?
-  azure_client_id: str?
-  azure_client_secret: str?
-  use_device_login: bool?         # ← nový přepínač
 
 options:
-  local_folder: /media/onedrive
-  remote_folder: HomeAssistant
-  azure_client_id: ""
-  azure_client_secret: ""
-  use_device_login: true          # ← zapnuto
+  local_folder: "/media/onedrive/"
+  remote_folder: "HomeAssistant"
+  application_id: ""
+  azure_tenant_id: "common"
+  onedrive_authresponse: ""
+  monitor_interval: 300            # polling interval in seconds (default 300)
+  monitor_fullscan_frequency: 12   # full-scan every N intervals (default 12)
 
+schema:
+  local_folder: str
+  remote_folder: str?
+  application_id: str?
+  azure_tenant_id: str?
+  onedrive_authresponse: str?
+  monitor_interval: int?
+  monitor_fullscan_frequency: int?
