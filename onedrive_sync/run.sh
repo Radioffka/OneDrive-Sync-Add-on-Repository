@@ -26,7 +26,7 @@ if [ -z "$LOCAL_DIR" ]; then
   exit 1
 fi
 
-# připrava složek
+# příprava složek
 mkdir -p "$CONF" "$LOCAL_DIR"
 
 # vygeneruj config.ini
